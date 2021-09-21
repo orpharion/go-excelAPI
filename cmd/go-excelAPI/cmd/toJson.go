@@ -1,0 +1,65 @@
+/*
+Copyright © 2021 NAME HERE <EMAIL ADDRESS>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+package cmd
+
+import (
+	"encoding/json"
+	"fmt"
+	"github.com/orpharion/go-excelAPI/pkg/api"
+	"github.com/orpharion/go-excelAPI/pkg/object/dump"
+	"github.com/spf13/cobra"
+	"io/ioutil"
+)
+
+// toJsonCmd represents the toJson command
+var toJsonCmd = &cobra.Command{
+	Use:   "toJson",
+	Short: "Dump an Excel workbook as JSON, to stdout.",
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
+		fPath := args[0]
+		b, err := ioutil.ReadFile(fPath)
+		if err != nil {
+			return
+		}
+
+		wb, err := api.CreateWorkbook(b)
+		if err != nil {
+			return
+		}
+		wb_ := dump.Workbook(&wb)
+		jb, err := json.Marshal(wb_)
+		if err != nil {
+			return
+		}
+		fmt.Println(string(jb))
+		return
+	},
+	Args: cobra.ExactArgs(1),
+}
+
+func init() {
+	rootCmd.AddCommand(toJsonCmd)
+
+	// Here you will define your flags and configuration settings.
+
+	// Cobra supports Persistent Flags which will work for this command
+	// and all subcommands, e.g.:
+	// toJsonCmd.PersistentFlags().String("foo", "", "A help for foo")
+
+	// Cobra supports local flags which will only run when this command
+	// is called directly, e.g.:
+	// toJsonCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
