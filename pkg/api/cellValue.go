@@ -63,6 +63,9 @@ func ValueFromImpl(c *xlsx.Cell) interface{} {
 			return i
 		}
 		return unwrap(strconv.ParseFloat(c.Value, 64)).(float64)
+	case xlsx.CellTypeStringFormula:
+		// todo
+		return c.Value
 	default:
 		pIf(true)
 	}
@@ -82,6 +85,9 @@ func TypeFromImpl(c *xlsx.Cell) ValueType {
 			return Integer
 		}
 		return Double
+	case xlsx.CellTypeStringFormula:
+		// todo
+		return String
 	default:
 		pIf(true)
 	}

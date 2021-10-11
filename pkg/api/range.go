@@ -30,10 +30,18 @@ func ByWorksheetAndIndexes(worksheet *Worksheet, startRow, startColumn, rowCount
 	for iR, row := range rows {
 		values[iR] = make([]interface{}, columnCount)
 		valueTypes[iR] = make([]ValueType, columnCount)
-		_r := row.Cells[startColumn:columnCount]
-		for iC, c := range _r {
-			values[iR][iC] = ValueFromImpl(c)
-			valueTypes[iR][iC] = TypeFromImpl(c)
+		if row.Cells != nil {
+			if uint(len(row.Cells)) > startColumn {
+				_cC := columnCount
+				if startColumn+columnCount >= uint(len(row.Cells)) {
+					_cC = uint(len(row.Cells)) - startColumn
+				}
+				_r := row.Cells[startColumn:_cC]
+				for iC, c := range _r {
+					values[iR][iC] = ValueFromImpl(c)
+					valueTypes[iR][iC] = TypeFromImpl(c)
+				}
+			}
 		}
 	}
 	return Range{
@@ -48,11 +56,11 @@ func ByWorksheetAndIndexes(worksheet *Worksheet, startRow, startColumn, rowCount
 	}
 }
 
-func (r *Range) GetAddress() Address             { return r.address }
-func (r *Range) GetColumnCount() uint            { return r.columnCount }
-func (r *Range) GetColumnIndex() uint            { return r.columnIndex }
-func (r *Range) GetRowIndex() uint               { return r.rowIndex }
-func (r *Range) GetValues() [][]interface{}      { return r.values }
+func (r *Range) GetAddress() Address          { return r.address }
+func (r *Range) GetColumnCount() uint         { return r.columnCount }
+func (r *Range) GetColumnIndex() uint         { return r.columnIndex }
+func (r *Range) GetRowIndex() uint            { return r.rowIndex }
+func (r *Range) GetValues() [][]interface{}   { return r.values }
 func (r *Range) GetValueTypes() [][]ValueType { return r.valueTypes }
 
 //func (r *Range) SetValues(v [][]interface{}) { r.values = v }
